@@ -163,6 +163,11 @@ html,h1,h2,h3,h4,h5,h6,a{
 .blog .card-body{
 	padding: 1em;
 }
+
+.blogContent{
+	margin: 2em;
+}
+
 .team{
 	margin: 4em 0;
 	position: relative;

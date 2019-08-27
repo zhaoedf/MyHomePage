@@ -1,7 +1,7 @@
 import click
 import os
 import sys
-from datetime import datetime
+import datetime
 
 from flask import Flask,render_template,request,url_for,redirect,flash
 from flask_sqlalchemy import SQLAlchemy
@@ -14,7 +14,6 @@ from flask_admin.contrib.sqla import ModelView
 from flask_ckeditor import CKEditor, CKEditorField
 
 
-from datetime import timedelta
 
 
 # SQLite URI compatible
@@ -29,7 +28,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'dev'
 app.config['SQLALCHEMY_DATABASE_URI'] = prefix + os.path.join(app.root_path, 'data.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SEND_FILE_MAX_AGE_DEFAULT'] = timedelta(seconds=1)
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = datetime.timedelta(seconds=1)
 # app.config['DEBUG'] = True
 
 db = SQLAlchemy(app, use_native_unicode='utf8')
@@ -52,17 +51,22 @@ class PostAdmin(ModelView):
     create_template = 'blogEdit.html'
     edit_template = 'blogEdit.html'
 
-class message(db.Model):
+class Message(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     name = db.Column(db.String(20))
     mail = db.Column(db.String(40))
-    body = db.Column(db.String(200))
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow,index=True)
+    body = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, default=datetime.datetime.utcnow,index=True)
 
-class blog(db.Model):
+class Blog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120))
     text = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, default=datetime.datetime.utcnow,index=True)
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    password = db.Column(db.String(40))
 
 class MesForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired(), Length(1, 20)])
@@ -71,7 +75,7 @@ class MesForm(FlaskForm):
 
 
 admin = Admin(app, name='Flask-CKEditor demo')
-admin.add_view(PostAdmin(blog, db.session))
+admin.add_view(PostAdmin(Blog, db.session))
 
 
 
@@ -109,6 +113,15 @@ def hello_world():
 # @app.route('/admin', methods=['GET','POST'])
 # def admin():
 #     pass
+
+@app.route('/blogContent/<int:blog_id>')
+def blogContentShow(blog_id):
+   blog = Blog.query.get_or_404(blog_id)
+   blog.timestamp += datetime.timedelta(hours=8)
+
+   return render_template('blogContent.html',blog=blog)
+
+
 
 @app.cli.command()
 def delete_cache():
