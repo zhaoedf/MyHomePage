@@ -12,6 +12,8 @@ from wtforms.validators import DataRequired, Length
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from flask_ckeditor import CKEditor, CKEditorField
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import LoginManager,UserMixin
 
 
 
@@ -51,6 +53,12 @@ class PostAdmin(ModelView):
     create_template = 'blogEdit.html'
     edit_template = 'blogEdit.html'
 
+class PostMessage(ModelView):
+    form_overrides = dict(text=CKEditorField)
+    create_template = 'blogEdit.html'
+    edit_template = 'blogEdit.html'
+
+
 class Message(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     name = db.Column(db.String(20))
@@ -64,8 +72,9 @@ class Blog(db.Model):
     text = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, default=datetime.datetime.utcnow,index=True)
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20))
     password = db.Column(db.String(40))
 
 class MesForm(FlaskForm):
@@ -74,8 +83,9 @@ class MesForm(FlaskForm):
     submit = SubmitField()
 
 
-admin = Admin(app, name='Flask-CKEditor demo')
+admin = Admin(app, name='Admin')
 admin.add_view(PostAdmin(Blog, db.session))
+admin.add_view(PostMessage(Message,db.session))
 
 
 
@@ -100,7 +110,7 @@ def hello_world():
         content = request.form.get('content')
         print(content)
 
-        mes = message(name=name,mail=mail,body=content)
+        mes = Message(name=name,mail=mail,body=content)
         db.session.add(mes)
         db.session.commit()
 
@@ -114,12 +124,26 @@ def hello_world():
 # def admin():
 #     pass
 
+
+
+@app.route('/blogDisplay',methods=['GET','POST'])
+def blogAllDisplay():
+    page = request.args.get('page',1,type=int)
+
+    pagination = Blog.query.order_by(Blog.timestamp.desc()).paginate(page,3,error_out=False)
+
+    blogs = pagination.items
+
+    return render_template('blogDisplay.html',blogs=blogs,paginate=pagination)
+
 @app.route('/blogContent/<int:blog_id>')
 def blogContentShow(blog_id):
    blog = Blog.query.get_or_404(blog_id)
    blog.timestamp += datetime.timedelta(hours=8)
 
    return render_template('blogContent.html',blog=blog)
+
+
 
 
 
