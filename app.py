@@ -9,11 +9,11 @@ from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired, Length
-from flask_admin import Admin
+from flask_admin import Admin,AdminIndexView,expose
 from flask_admin.contrib.sqla import ModelView
 from flask_ckeditor import CKEditor, CKEditorField
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import LoginManager,UserMixin
+from flask_login import LoginManager,UserMixin,login_user,login_required,logout_user,current_user
 
 
 
@@ -53,10 +53,28 @@ class PostAdmin(ModelView):
     create_template = 'blogEdit.html'
     edit_template = 'blogEdit.html'
 
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for('login'))
+
 class PostMessage(ModelView):
     form_overrides = dict(text=CKEditorField)
     create_template = 'blogEdit.html'
     edit_template = 'blogEdit.html'
+
+class UserCheck(ModelView):
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+class MyAdminIndexView(AdminIndexView):
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for('login'))
+
 
 
 class Message(db.Model):
@@ -75,7 +93,13 @@ class Blog(db.Model):
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20))
-    password = db.Column(db.String(40))
+    password_hash = db.Column(db.String(128))
+
+    def set_password(self, password):  # 用来设置密码的方法，接受密码作为参数
+        self.password_hash = generate_password_hash(password)  # 将生成的密码保持到对应字段
+
+    def validate_password(self, password):  # 用于验证密码的方法，接受密码作为参数
+        return check_password_hash(self.password_hash, password)  # 返回布尔值
 
 class MesForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired(), Length(1, 20)])
@@ -83,10 +107,15 @@ class MesForm(FlaskForm):
     submit = SubmitField()
 
 
-admin = Admin(app, name='Admin')
+admin = Admin(app, name='Admin',index_view=MyAdminIndexView())
 admin.add_view(PostAdmin(Blog, db.session))
 admin.add_view(PostMessage(Message,db.session))
+admin.add_view(UserCheck(User,db.session))
 
+
+login_manager = LoginManager(app)
+login_manager.init_app(app)
+login_manager.login_view='app.login'
 
 
 @app.cli.command()
@@ -97,6 +126,27 @@ def initdb(drop):
         db.drop_all()
     db.create_all()
     click.echo('Initialized database.')
+
+@app.cli.command()
+@click.option('--username', prompt=True, help='The username used to login.')
+@click.option('--password', prompt=True, hide_input=True, confirmation_prompt=True, help='The password used to login.')
+def admin(username, password):
+    """Create user."""
+    db.create_all()
+
+    user = User.query.first()
+    if user is not None:
+        click.echo('Updating user...')
+        user.username = username
+        user.set_password(password)  # 设置密码
+    else:
+        click.echo('Creating user...')
+        user = User(username=username)
+        user.set_password(password)  # 设置密码
+        db.session.add(user)
+
+    db.session.commit()  # 提交数据库会话
+    click.echo('Done.')
 
 
 
@@ -144,8 +194,56 @@ def blogContentShow(blog_id):
    return render_template('blogContent.html',blog=blog)
 
 
+@login_manager.user_loader
+def load_user(user_id):  # 创建用户加载回调函数，接受用户 ID 作为参数
+    user = User.query.get(int(user_id))  # 用 ID 作为 User 模型的主键查询对应的用户
+    return user  # 返回用户对象
+
+@app.route('/login', methods=['GET','POST'])
+def login():
+    print(1)
+    if request.method == 'POST':
+        print(2)
+        username = request.form['username']
+        password = request.form['password']
+        print(username,password)
+
+        if not username or not password:
+            flash('Invalid input.')
+            return redirect(url_for('login'))
+
+        user = User.query.first()
+        # 验证用户名和密码是否一致
+        print(username == user.username,user.validate_password(password))
+        if username == user.username and user.validate_password(password):
+            login_user(user)  # 登入用户
+            flash('Login success.')
+            print(1)
+            return redirect(url_for('admin.index'))  # 重定向到主页
+
+        flash('Invalid username or password.')  # 如果验证失败，显示错误消息
+        return redirect(url_for('login'))  # 重定向回登录页面
 
 
+    if current_user.is_authenticated:
+        return redirect(url_for('admin.index'))
+    else:
+        return render_template('login.html')
+
+
+@app.route('/logout')
+@login_required  # 用于视图保护，后面会详细介绍
+def logout():
+    logout_user()  # 登出用户
+    return 'log out successfully!'
+    return redirect(url_for('hello_world'))  # 重定向回首页
+
+
+
+@app.route('/adm')
+@login_required
+def admin_fliter():
+    return render_template('admin.html')
 
 @app.cli.command()
 def delete_cache():
