@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>
-	<title>Bootstrap 4 landing page</title>
+	<title>MyHomePage</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	 <!-- add bootstrap css file -->
@@ -65,17 +65,11 @@
 
 </header>
 
-  {% for message in get_flashed_messages() %}
-<div class="alert alert-warning">
-<button type="button" class="close" data-dismiss="alert">×</button>
-{{ message }}
-</div>
-{% endfor %}
 
 <!-- about section -->
 <div class="about" id="about">
 	<div class="container">
-	  <h1 class="text-center">About Me</h1>
+	  <h1 class="text-center">关于我</h1>
 		<div class="row">
 			<div class="col-lg-4 col-md-4 col-sm-12">
 				<img src="../static/images/watermelon.png" class="img-fluid">
@@ -85,12 +79,9 @@
 
 				<h3>招德枫</h3>
 				<p>
-				   ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-					tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-					quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-					consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-					cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-					proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+				   我是中国海洋大学的一名学生，专业是计算机科学与技术。
+                   平常喜欢游泳，看电影。
+                   这是我的第一个个人主页， 希望你们能喜欢！
 				</p>
 			</div>
 		</div>
@@ -99,37 +90,37 @@
 
 <!-- portfolio -->
 <div class="portfolio" id="portfolio">
-     <h1 class="text-center">Portfolio</h1>
+     <h1 class="text-center">照片墙</h1>
 	<div class="container">
 		<div class="row">
 			<div class="col-lg-4 col-md-4 col-sm-12">
-				<img src="../static/images/portfolio/port13.png" class="img-fluid">
+				<img src="../static/images/photowall.png" class="img-fluid">
 			</div>
 			<div class="col-lg-4 col-md-4 col-sm-12">
-				<img src="../static/images/portfolio/port1.png" class="img-fluid">
+				<img src="../static/images/photowall.png" class="img-fluid">
 			</div>
 			<div class="col-lg-4 col-md-4 col-sm-12">
-				<img src="../static/images/portfolio/port6.png" class="img-fluid">
-			</div>
-
-			<div class="col-lg-4 col-md-4 col-sm-12">
-				<img src="../static/images/portfolio/port3.png" class="img-fluid">
-			</div>
-			<div class="col-lg-4 col-md-4 col-sm-12">
-				<img src="../static/images/portfolio/port11.png" class="img-fluid">
-			</div>
-			<div class="col-lg-4 col-md-4 col-sm-12">
-				<img src="../static/images/portfolio/electric.png" class="img-fluid">
+				<img src="../static/images/photowall.png" class="img-fluid">
 			</div>
 
 			<div class="col-lg-4 col-md-4 col-sm-12">
-				<img src="../static/images/portfolio/Classic.jpg" class="img-fluid">
+				<img src="../static/images/photowall.png" class="img-fluid">
 			</div>
 			<div class="col-lg-4 col-md-4 col-sm-12">
-				<img src="../static/images/portfolio/port1.png" class="img-fluid">
+				<img src="../static/images/photowall.png" class="img-fluid">
 			</div>
 			<div class="col-lg-4 col-md-4 col-sm-12">
-				<img src="../static/images/portfolio/port8.png" class="img-fluid">
+				<img src="../static/images/photowall.png" class="img-fluid">
+			</div>
+
+			<div class="col-lg-4 col-md-4 col-sm-12">
+				<img src="../static/images/photowall.png" class="img-fluid">
+			</div>
+			<div class="col-lg-4 col-md-4 col-sm-12">
+				<img src="../static/images/photowall.png" class="img-fluid">
+			</div>
+			<div class="col-lg-4 col-md-4 col-sm-12">
+				<img src="../static/images/photowall.png" class="img-fluid">
 			</div>
 		</div>
 	</div>
@@ -139,59 +130,56 @@
 <!-- Posts section -->
 <div class="blog" id="blog">
 	<div class="container">
-	<h1 class="text-center">Blog</h1>
+	<h1 class="text-center">博客</h1>
 		<div class="row">
 			<div class="col-md-4 col-lg-4 col-sm-12">
 				<div class="card">
 					<div class="card-img">
-						<img src="../static/images/posts/polit.jpg" class="img-fluid">
+						<img src="../static/images/{{ blogs[0].type }}.png" class="img-fluid">
 					</div>
 
 					<div class="card-body">
-					<h4 class="card-title">Post Title</h4>
+					<h4 class="card-title">{{ blogs[0].title }}</h4>
 						<p class="card-text">
-
-							proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                            {{ blogs[0].text | truncate(10) }}
 						</p>
 					</div>
 					<div class="card-footer">
-						<a href="" class="card-link">Read more</a>
+						<a href="/blogContent/{{ blogs[0].id }}" class="card-link">Read more</a>
 					</div>
 				</div>
 			</div>
 			<div class="col-md-4 col-lg-4 col-sm-12">
 				<div class="card">
 					<div class="card-img">
-						<img src="../static/images/posts/images.jpg" class="img-fluid">
+						<img src="../static/images/{{ blogs[1].type }}.png" class="img-fluid">
 					</div>
 
 					<div class="card-body">
-					   <h4 class="card-title">Post Title</h4>
+					   <h4 class="card-title">{{ blogs[1].title }}</h4>
 						<p class="card-text">
-
-							proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+							{{ blogs[1].text | truncate(10) }}
 						</p>
 					</div>
 					<div class="card-footer">
-						<a href="" class="card-link">Read more</a>
+						<a href="/blogContent/{{ blogs[1].id }}" class="card-link">Read more</a>
 					</div>
 				</div>
 			</div>
 			<div class="col-md-4 col-lg-4 col-sm-12">
 				<div class="card">
 					<div class="card-img">
-						<img src="../static/images/posts/imag2.jpg" class="img-fluid">
+						<img src="../static/images/left_arr.png" class="img-fluid">
 					</div>
 
 					<div class="card-body">
-					<h4 class="card-title">Post Title</h4>
-						<p class="card-text">
-
-							proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+						<p class="card-text text-info">
+                            点击下方链接
+                            查看更多精彩博客！
 						</p>
 					</div>
 					<div class="card-footer">
-						<a href="" class="card-link">Read more</a>
+						<a href={{ url_for('blogAllDisplay') }} class="card-link">Go!</a>
 					</div>
 				</div>
 			</div>
@@ -202,35 +190,32 @@
 <!-- Team section -->
 <div class="team" id="team">
 	<div class="container">
-	   <h1 class="text-center">Our Team</h1>
+	   <h1 class="text-center">技能展示</h1>
 		<div class="row">
 			<div class="col-lg-3 col-md-3 col-sm-12 item">
-				<img src="../static/images/team-2.jpg" class="img-fluid" alt="team">
+				<img src="../static/images/py.png" class="img-fluid" alt="team">
 				<div class="des">
-				 	Sara
+				 	Python
 				 </div>
-				<span class="text-muted">Manager</span>
 			</div>
 			<div class="col-lg-3 col-md-3 col-sm-12 item">
-				<img src="../static/images/team-3.jpg" class="img-fluid" alt="team">
+				<img src="../static/images/c++.png" class="img-fluid" alt="team">
 				<div class="des">
-				 	 Chris
+				 	 C++
 				 </div>
-				<span class="text-muted">S.enginner</span>
+                <span class="text-muted"></span>
 			</div>
 			<div class="col-lg-3 col-md-3 col-sm-12 item">
-				<img src="../static/images/team-2.jpg" class="img-fluid" alt="team">
+				<img src="../static/images/torch.png" class="img-fluid" alt="team">
 				<div class="des">
-				 	Layla
+				 	PyTorch
 				 </div>
-				<span class="text-muted">Front End Developer</span>
 			</div>
 			<div class="col-lg-3 col-md-3 col-sm-12 item">
-				<img src="../static/images/team-3.jpg" class="img-fluid" alt="team">
+				<img src="../static/images/Opencv.png" class="img-fluid" alt="team">
 				 <div class="des">
-				 	J.Jirard
+				 	Opencv
 				 </div>
-				<span class="text-muted">Team Manger</span>
 			</div>
 		</div>
 	</div>
@@ -246,10 +231,10 @@
 				</div>
 				<div class="col-lg-8 col-md-8 col-sm-12 right">
 				   <div class="form-group">
-				   	 <input type="text" class="form-control form-control-lg" placeholder="Your Name" name="name">
+				   	 <input type="text" class="form-control form-control-lg" placeholder="名字" name="name">
 				   </div>
 				   <div class="form-group">
-				   	 <input type="email" class="form-control form-control-lg" placeholder="YourEmail@email.com" name="mail">
+				   	 <input type="email" class="form-control form-control-lg" placeholder="电子邮箱地址" name="mail">
 				   </div>
 				   <div class="form-group">
 				   	 <textarea class="form-control form-control-lg" name="content">

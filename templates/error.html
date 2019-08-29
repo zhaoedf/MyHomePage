@@ -16,7 +16,6 @@
   <!-- Custom styles for this template -->
   <link href="../static/css/blog-post.css" rel="stylesheet">
 
-
 </head>
 
 <body>
@@ -24,10 +23,13 @@
   <!-- Navigation -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
     <div class="container">
-      <a class="navbar-brand" href="/blogDisplay">&larr; Back to BlogDisplay</a>
+      <a class="navbar-brand" href="/">&larr; Home</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+
+      </div>
     </div>
   </nav>
 
@@ -36,50 +38,30 @@
 
     <div class="row">
 
-      <!-- Post Content Column -->
-      <div class="col-lg-8">
+      <!-- Blog Entries Column -->
+      <div class="col-md-8">
 
-        <!-- Title -->
-        <h1 class="mt-4">{{ blog.title }}</h1>
+        <h1 class="my-4">
+            Ooops!
+        </h1>
 
-        <!-- Author -->
-        <p class="lead">
-          by
-          <a href="#">Zhao Defeng</a>
-        </p>
-
-        <hr>
-
-        <!-- Date/Time -->
-        <p>Posted on {{ blog.timestamp }}</p>
-
-        <hr>
-
-        <!-- Preview Image -->
-
-        <hr>
-
-        <!-- Post Content -->
-        <p>
-            {{ blog.text }}
-        </p>
-        <hr>
-
-
-
-
-      </div>
+      <p>
+            似乎发生了 {{ code }} 错误 <br>
+             {{ description }}! <br>
+            点击Home键，返回主页！
+      </p>
 
     </div>
     <!-- /.row -->
 
   </div>
+  </div>
   <!-- /.container -->
 
   <!-- Footer -->
-  <footer class="py-5 bg-dark">
+  <footer class="py-5 bg-dark fixed-bottom ">
     <div class="container">
-      <p class="m-0 text-center text-white">Copyright &copy; Your Website 2019</p>
+      <p class="m-0 text-center text-white fix">Copyright &copy; Your Website 2019</p>
     </div>
     <!-- /.container -->
   </footer>
@@ -91,3 +73,4 @@
 </body>
 
 </html>
+

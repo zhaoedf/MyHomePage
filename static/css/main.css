@@ -182,7 +182,7 @@ html,h1,h2,h3,h4,h5,h6,a{
 	overflow: hidden;	
 }
 .team .des{
-	background: #F97300;
+	background: #0583F2;
 	color: #fff;
 	text-align: center;
 	border-top-right-radius: 93%;
@@ -195,7 +195,7 @@ html,h1,h2,h3,h4,h5,h6,a{
 }
 .team .item:hover .des{
 	height: 100%;
-	background:#f973007d;
+	background: rgba(136, 201, 242, 0.51);
     position: absolute;
 	width: 89%;
 	padding: 5em;
@@ -215,7 +215,7 @@ html,h1,h2,h3,h4,h5,h6,a{
 	max-width: 600px;
 }
 .contact-form .right .btn-secondary{
-	background:  #F97300;
+	background:  #1E82D9;
 	color: #fff;
 	border:0;
 }

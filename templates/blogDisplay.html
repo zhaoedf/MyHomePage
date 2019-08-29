@@ -41,19 +41,18 @@
       <!-- Blog Entries Column -->
       <div class="col-md-8">
 
-        <h1 class="my-4">Page Heading
-          <small>Secondary Text</small>
+        <h1 class="my-4">欢迎来到我的博客！
         </h1>
 
       {% for blog in blogs %}
 
         <!-- Blog Post -->
         <div class="card mb-4">
-          <img class="card-img-top" src="http://placehold.it/750x300" alt="Card image cap">
+          <img class="card-img-top" src="../static/images/{{ blog.type }}.png" alt="Card image cap">
           <div class="card-body">
             <h2 class="card-title">{{ blog.title }}</h2>
             <p class="card-text">
-                {{ blog.text }}
+                {{ blog.text | truncate(100) }}
             </p>
             <a href="/blogContent/{{ blog.id }}" class="btn btn-primary">Read More &rarr;</a>
           </div>
@@ -98,7 +97,7 @@
   <!-- /.container -->
 
   <!-- Footer -->
-  <footer class="py-5 bg-dark">
+  <footer class="py-5 bg-dark ">
     <div class="container">
       <p class="m-0 text-center text-white">Copyright &copy; Your Website 2019</p>
     </div>

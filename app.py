@@ -13,6 +13,7 @@ from flask_admin import Admin,AdminIndexView,expose
 from flask_admin.contrib.sqla import ModelView
 from flask_ckeditor import CKEditor, CKEditorField
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.exceptions import HTTPException
 from flask_login import LoginManager,UserMixin,login_user,login_required,logout_user,current_user
 
 
@@ -82,13 +83,14 @@ class Message(db.Model):
     name = db.Column(db.String(20))
     mail = db.Column(db.String(40))
     body = db.Column(db.Text)
-    timestamp = db.Column(db.DateTime, default=datetime.datetime.utcnow,index=True)
+    timestamp = db.Column(db.DateTime, default=datetime.datetime.now(),index=True)
 
 class Blog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120))
     text = db.Column(db.Text)
-    timestamp = db.Column(db.DateTime, default=datetime.datetime.utcnow,index=True)
+    type = db.Column(db.String(15))
+    timestamp = db.Column(db.DateTime, default=datetime.datetime.now(),index=True)
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -164,17 +166,19 @@ def hello_world():
         db.session.add(mes)
         db.session.commit()
 
-        flash('success！')
+        return redirect(url_for('prompt'))
 
-        return redirect((url_for('hello_world')))
+    blogs = Blog.query.order_by(Blog.timestamp.desc()).limit(2)
 
-    return render_template('index.html')
+    return render_template('index.html',blogs=blogs)
 
 # @app.route('/admin', methods=['GET','POST'])
 # def admin():
 #     pass
 
-
+@app.route('/prompt')
+def prompt():
+    return render_template('prompt.html')
 
 @app.route('/blogDisplay',methods=['GET','POST'])
 def blogAllDisplay():
@@ -239,11 +243,14 @@ def logout():
     return redirect(url_for('hello_world'))  # 重定向回首页
 
 
+@app.errorhandler(Exception)
+def all_exception_handler(e):
+    if isinstance(e, HTTPException):
+        print(e.code,e.description)
+        return render_template('error.html', code=e.code, description=e.description)
 
-@app.route('/adm')
-@login_required
-def admin_fliter():
-    return render_template('admin.html')
+    return render_template('error.html', code=500, description='Error')
+
 
 @app.cli.command()
 def delete_cache():
